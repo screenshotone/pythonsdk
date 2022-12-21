@@ -42,6 +42,10 @@ with open('example.png', 'wb') as result_file:
     shutil.copyfileobj(image, result_file)
 ```
 
+## Release 
+
+[Github Actions](https://github.com/screenshotone/pythonsdk/blob/main/.github/workflows/pypi-release.yml) is used to automate the release process and publishing to PyPI. Update the library version in `pyproject.toml` and [create a new release](https://github.com/screenshotone/pythonsdk/releases/new) to launch the `publish` workflow. 
+
 ## License 
 
 `screenshotone/pythonsdk` is released under [the MIT license](LICENSE).
