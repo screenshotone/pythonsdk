@@ -9,14 +9,37 @@ The SDK client is synchronized with the latest [screenshot API options](https://
 ## Installation
 
 ```shell
-
+pip install screenshotone
 ```
 
 ## Usage
 
 Generate a screenshot URL without executing the request. Or download the screenshot. It is up to you: 
-```php
+```python
+import shutil
+from screenshotone import Client, TakeOptions
 
+# create API client 
+client = Client('<your access key>', '<your secret key>')
+
+# set up options
+options = (TakeOptions.url('https://screenshotone.com')
+    .format("png")
+    .viewport_width(1024)
+    .viewport_height(768)
+    .block_cookie_banners(True)
+    .block_chats(True))
+
+# generate the screenshot URL and share it with a user
+url = client.generate_take_url(options)
+# expected output: https://api.screenshotone.com/take?url=https%3A%2F%2Fscreenshotone.com&viewport_width=1024&viewport_height=768&block_cookie_banners=True&block_chats=True&access_key=<your access key>&signature=6afc9417a523788580fa01a9f668ea82c78a9d2b41441d2a696010bf2743170f
+
+# or render a screenshot and download the image as stream
+image = client.take(options)
+
+# store the screenshot the example.png file
+with open('example.png', 'wb') as result_file:
+    shutil.copyfileobj(image, result_file)
 ```
 
 ## License 

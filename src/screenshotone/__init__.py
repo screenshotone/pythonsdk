@@ -1,0 +1,1 @@
+from screenshotone.sdk import Client, TakeOptions
