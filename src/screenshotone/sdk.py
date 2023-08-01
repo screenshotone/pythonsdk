@@ -4,6 +4,7 @@ import urllib.parse
 import hmac
 import hashlib
 import requests
+import json
 
 API_BASE_URL = 'https://api.screenshotone.com'
 API_TAKE_PATH = '/take'
