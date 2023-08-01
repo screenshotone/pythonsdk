@@ -8,6 +8,11 @@ import requests
 API_BASE_URL = 'https://api.screenshotone.com'
 API_TAKE_PATH = '/take'
 
+class InvalidRequestException(Exception):
+    pass
+class APIErrorException(Exception):
+    pass
+
 class TakeOptions: 
     options = OrderedDict()    
 
@@ -332,5 +337,17 @@ class Client:
         
         if r.status_code == 200: 
             return r.raw
+        elif r.status_code == 400:
+            error_response = json.loads(r.text)
+            if not error_response.get('is_successful'):
+                error_messages = [detail['message'] for detail in error_response.get('error_details', [])]
+                error_message = f"Error: {error_response.get('error_message', 'Unknown error')}\n"
+                error_message += "\n".join(error_messages)
+
+                raise InvalidRequestException(error_message)
+        else:
+            # Handle other error status codes with a generic message
+            error_message = f"An error occurred while processing the request. Status code: {r.status_code}"
+            raise APIErrorException(error_message)
 
         return None
