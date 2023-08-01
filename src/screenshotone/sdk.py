@@ -179,6 +179,11 @@ class TakeOptions:
 
         return self
 
+    def block_banners_by_heuristics(self, value): 	
+        self.options['block_banners_by_heuristics'] = value
+
+        return self
+
     def block_chats(self, value): 	
         self.options['block_chats'] = value
 
