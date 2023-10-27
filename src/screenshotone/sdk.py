@@ -21,14 +21,25 @@ class TakeOptions:
         for key, value in defaults.items(): 
             self.options[key] = value    
 
-    def url(url): 
-        return TakeOptions({'url': url})
+    def url(self, value): 	
+        self.options['url'] = value
 
-    def html(html): 
-        return TakeOptions({'html': html})
+        return self
 
-    def markdown(markdown): 
-        return TakeOptions({'markdown': markdown})
+    def html(self, value): 	
+        self.options['html'] = value
+
+        return self
+
+    def markdown(self, value): 	
+        self.options['markdown'] = value
+
+        return self
+
+    def signature(self, value): 	
+        self.options['signature'] = value
+
+        return self
 
     def selector(self, value): 	
         self.options['selector'] = value
@@ -47,6 +58,26 @@ class TakeOptions:
 
     def format(self, value): 	
         self.options['format'] = value
+
+        return self
+
+    def clip_x(self, value): 	
+        self.options['clip_x'] = value
+
+        return self
+
+    def clip_y(self, value): 	
+        self.options['clip_y'] = value
+
+        return self
+
+    def clip_width(self, value): 	
+        self.options['clip_width'] = value
+
+        return self
+
+    def clip_height(self, value): 	
+        self.options['clip_height'] = value
 
         return self
 
@@ -80,7 +111,7 @@ class TakeOptions:
 
         return self
 
-    def hide_selectors(self, values: List[str]): 	
+    def hide_selectors(self, values: List[string]): 	
         self.options['hide_selectors'] = values
 
         return self
@@ -210,12 +241,12 @@ class TakeOptions:
 
         return self
 
-    def block_requests(self, values: List[str]): 	
+    def block_requests(self, values: List[string]): 	
         self.options['block_requests'] = values
 
         return self
 
-    def block_resources(self, values: List[str]): 	
+    def block_resources(self, values: List[string]): 	
         self.options['block_resources'] = values
 
         return self
@@ -245,12 +276,12 @@ class TakeOptions:
 
         return self
 
-    def headers(self, values: List[str]): 	
+    def headers(self, values: List[string]): 	
         self.options['headers'] = values
 
         return self
 
-    def cookies(self, values: List[str]): 	
+    def cookies(self, values: List[string]): 	
         self.options['cookies'] = values
 
         return self
@@ -275,7 +306,7 @@ class TakeOptions:
 
         return self
 
-    def wait_until(self, values: List[str]): 	
+    def wait_until(self, values: List[string]): 	
         self.options['wait_until'] = values
 
         return self
@@ -304,6 +335,7 @@ class TakeOptions:
         self.options['storage_class'] = value
 
         return self
+
 
     def query(self): 
         return self.options
