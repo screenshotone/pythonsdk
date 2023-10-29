@@ -111,7 +111,7 @@ class TakeOptions:
 
         return self
 
-    def hide_selectors(self, values: List[string]): 	
+    def hide_selectors(self, values: List[str]): 	
         self.options['hide_selectors'] = values
 
         return self
@@ -241,12 +241,12 @@ class TakeOptions:
 
         return self
 
-    def block_requests(self, values: List[string]): 	
+    def block_requests(self, values: List[str]): 	
         self.options['block_requests'] = values
 
         return self
 
-    def block_resources(self, values: List[string]): 	
+    def block_resources(self, values: List[str]): 	
         self.options['block_resources'] = values
 
         return self
@@ -276,12 +276,12 @@ class TakeOptions:
 
         return self
 
-    def headers(self, values: List[string]): 	
+    def headers(self, values: List[str]): 	
         self.options['headers'] = values
 
         return self
 
-    def cookies(self, values: List[string]): 	
+    def cookies(self, values: List[str]): 	
         self.options['cookies'] = values
 
         return self
@@ -306,7 +306,7 @@ class TakeOptions:
 
         return self
 
-    def wait_until(self, values: List[string]): 	
+    def wait_until(self, values: List[str]): 	
         self.options['wait_until'] = values
 
         return self
