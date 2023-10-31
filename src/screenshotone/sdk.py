@@ -21,20 +21,14 @@ class TakeOptions:
         for key, value in defaults.items(): 
             self.options[key] = value    
 
-    def url(self, value): 	
-        self.options['url'] = value
+    def url(url): 
+        return TakeOptions({'url': url})
 
-        return self
+    def html(html): 
+        return TakeOptions({'html': html})
 
-    def html(self, value): 	
-        self.options['html'] = value
-
-        return self
-
-    def markdown(self, value): 	
-        self.options['markdown'] = value
-
-        return self
+    def markdown(markdown): 
+        return TakeOptions({'markdown': markdown})
 
     def signature(self, value): 	
         self.options['signature'] = value
