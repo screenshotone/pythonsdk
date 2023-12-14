@@ -50,6 +50,21 @@ class TakeOptions:
 
         return self
 
+    def openai_api_key(self, value): 	
+        self.options['openai_api_key'] = value
+
+        return self
+
+    def vision_prompt(self, value): 	
+        self.options['vision_prompt'] = value
+
+        return self
+    
+    def vision_max_tokens(self, value): 	
+        self.options['vision_max_tokens'] = value
+
+        return self
+
     def format(self, value): 	
         self.options['format'] = value
 
@@ -334,6 +349,14 @@ class TakeOptions:
     def query(self): 
         return self.options
 
+
+class ScreenshotResultVision: 
+    completion = None
+
+class ScreenshotResult: 
+    screenshot = None
+    vision = None
+    
 class Client: 
     access_key = None
     secret_key = None
@@ -364,6 +387,35 @@ class Client:
         
         if r.status_code == 200: 
             return r.raw
+        elif r.status_code == 400:
+            error_response = json.loads(r.text)
+            if not error_response.get('is_successful'):
+                error_messages = [detail['message'] for detail in error_response.get('error_details', [])]
+                error_message = f"Error: {error_response.get('error_message', 'Unknown error')}\n"
+                error_message += "\n".join(error_messages)
+
+                raise InvalidRequestException(error_message)
+        else:
+            # Handle other error status codes with a generic message
+            error_message = f"An error occurred while processing the request. Status code: {r.status_code}"
+            raise APIErrorException(error_message)
+
+        return None
+    
+    def take_with_metadata(self, options):
+        query = options.query()
+        query['access_key'] = self.access_key
+
+        url = '%s%s' % (API_BASE_URL, API_TAKE_PATH)
+        r = requests.post(url, json=query, stream=True)
+
+        vision = None
+        completion = r.headers.get('x-screenshotone-vision-completion')
+        if completion is not None:
+            vision = ScreenshotResultVision(completion=completion)
+
+        if r.status_code == 200: 
+            return ScreenshotResult(screenshot=r.raw, vision=vision)
         elif r.status_code == 400:
             error_response = json.loads(r.text)
             if not error_response.get('is_successful'):
