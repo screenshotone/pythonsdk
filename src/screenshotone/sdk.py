@@ -194,6 +194,11 @@ class TakeOptions:
         self.options['full_page_scroll'] = value
 
         return self
+    
+    def fail_if_content_contains(self, value): 	
+        self.options['fail_if_content_contains'] = value
+
+        return self
 
     def full_page_scroll_delay(self, value): 	
         self.options['full_page_scroll_delay'] = value
