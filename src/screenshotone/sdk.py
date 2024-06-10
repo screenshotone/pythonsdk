@@ -204,6 +204,11 @@ class TakeOptions:
         self.options['full_page_scroll_delay'] = value
 
         return self
+    
+    def full_page_max_height(self, value): 	
+        self.options['full_page_max_height'] = value
+
+        return self
 
     def full_page_scroll_by(self, value): 	
         self.options['full_page_scroll_by'] = value
