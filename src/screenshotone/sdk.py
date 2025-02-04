@@ -73,6 +73,11 @@ class TakeOptions:
 
         return self
 
+    def ip_country_code(self, value):
+        self.options["ip_country_code"] = value
+
+        return self
+
     def vision_max_tokens(self, value):
         self.options["vision_max_tokens"] = value
 
@@ -365,6 +370,166 @@ class TakeOptions:
 
     def storage_class(self, value):
         self.options["storage_class"] = value
+
+        return self
+
+    def storage_acl(self, value):
+        self.options["storage_acl"] = value
+
+        return self
+
+    def storage_endpoint(self, value):
+        self.options["storage_endpoint"] = value
+
+        return self
+
+    def storage_access_key_id(self, value):
+        self.options["storage_access_key_id"] = value
+
+        return self
+
+    def storage_secret_access_key(self, value):
+        self.options["storage_secret_access_key"] = value
+
+        return self
+
+    def storage_return_location(self, value):
+        self.options["storage_return_location"] = value
+
+        return self
+
+    def metadata_image_size(self, value):
+        self.options["metadata_image_size"] = value
+
+        return self
+
+    def metadata_fonts(self, value):
+        self.options["metadata_fonts"] = value
+
+        return self
+
+    def metadata_icon(self, value):
+        self.options["metadata_icon"] = value
+
+        return self
+
+    def metadata_open_graph(self, value):
+        self.options["metadata_open_graph"] = value
+
+        return self
+
+    def metadata_page_title(self, value):
+        self.options["metadata_page_title"] = value
+
+        return self
+
+    def metadata_content(self, value):
+        self.options["metadata_content"] = value
+
+        return self
+
+    def metadata_http_response_status_code(self, value):
+        self.options["metadata_http_response_status_code"] = value
+
+        return self
+
+    def metadata_http_response_headers(self, value):
+        self.options["metadata_http_response_headers"] = value
+
+        return self
+
+    def async_option(self, value):
+        self.options["async"] = value
+
+        return self
+
+    def webhook_url(self, value):
+        self.options["webhook_url"] = value
+
+        return self
+
+    def webhook_sign(self, value):
+        self.options["webhook_sign"] = value
+
+        return self
+
+    def ignore_host_errors(self, value):
+        self.options["ignore_host_errors"] = value
+
+        return self
+
+    def error_on_click_selector_not_found(self, value):
+        self.options["error_on_click_selector_not_found"] = value
+
+        return self
+
+    def fail_if_gpu_rendering_fails(self, value):
+        self.options["fail_if_gpu_rendering_fails"] = value
+
+        return self
+
+    def selector_scroll_into_view(self, value):
+        self.options["selector_scroll_into_view"] = value
+
+        return self
+
+    def capture_beyond_viewport(self, value):
+        self.options["capture_beyond_viewport"] = value
+
+        return self
+
+    def scroll_into_view(self, value):
+        self.options["scroll_into_view"] = value
+
+        return self
+
+    def scroll_into_view_adjust_top(self, value):
+        self.options["scroll_into_view_adjust_top"] = value
+
+        return self
+
+    def request_gpu_rendering(self, value):
+        self.options["request_gpu_rendering"] = value
+
+        return self
+
+    def pdf_print_background(self, value):
+        self.options["pdf_print_background"] = value
+
+        return self
+
+    def pdf_fit_one_page(self, value):
+        self.options["pdf_fit_one_page"] = value
+
+        return self
+
+    def pdf_landscape(self, value):
+        self.options["pdf_landscape"] = value
+
+        return self
+
+    def pdf_paper_format(self, value):
+        self.options["pdf_paper_format"] = value
+
+        return self
+
+    def bypass_csp(self, value):
+        self.options["bypass_csp"] = value
+
+        return self
+
+    def navigation_timeout(self, value):
+        self.options["navigation_timeout"] = value
+
+        return self
+
+    def wait_for_selector_algorithm(self, value):
+        self.options["wait_for_selector_algorithm"] = value
+
+        return self
+
+    def full_page_algorithm(self, value):
+        self.options["full_page_algorithm"] = value
 
         return self
 

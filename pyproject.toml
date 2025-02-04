@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 [project]
 name = "screenshotone"
-version = "0.0.13"
+version = "0.0.14"
 authors = [{ name = "Dmytro Krasun", email = "support@screenshotone.com" }]
 dependencies = ["requests >= 2.28.1"]
 description = "A Python SDK for ScreenshotOne.com API to take screenshots of URLs, render HTML as images and PDF"
