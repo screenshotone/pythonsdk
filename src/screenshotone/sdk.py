@@ -11,19 +11,23 @@ API_TAKE_PATH = "/take"
 
 
 class InvalidRequestException(Exception):
-    def __init__(self, message, http_status_code=None, error_code=None):
+    def __init__(
+        self, message, http_status_code=None, error_code=None, documentation_url=None
+    ):
         self.http_status_code = http_status_code
         self.error_code = error_code
+        self.documentation_url = documentation_url
 
         super().__init__(message)
 
 
 class APIErrorException(Exception):
-
-    def __init__(self, message, http_status_code=None, error_code=None):
+    def __init__(
+        self, message, http_status_code=None, error_code=None, documentation_url=None
+    ):
         self.http_status_code = http_status_code
         self.error_code = error_code
-
+        self.documentation_url = documentation_url
         super().__init__(message)
 
 
@@ -588,6 +592,7 @@ class Client:
         elif r.status_code == 400:
             error_response = json.loads(r.text)
             if not error_response.get("is_successful"):
+                error_response = json.loads(r.text)
                 error_messages = [
                     detail["message"]
                     for detail in error_response.get("error_details", [])
@@ -596,12 +601,27 @@ class Client:
                     f"Error: {error_response.get('error_message', 'Unknown error')}\n"
                 )
                 error_message += "\n".join(error_messages)
+                error_code = error_response.get("error_code")
+                documentation_url = error_response.get("documentation_url")
 
-                raise InvalidRequestException(error_message)
+                raise InvalidRequestException(
+                    error_message,
+                    http_status_code=r.status_code,
+                    error_code=error_code,
+                    documentation_url=documentation_url,
+                )
         else:
-            # Handle other error status codes with a generic message
-            error_message = f"An error occurred while processing the request. Status code: {r.status_code}"
-            raise APIErrorException(error_message)
+            error_response = json.loads(r.text)
+            error_code = error_response.get("error_code")
+            documentation_url = error_response.get("documentation_url")
+            error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
+
+            raise APIErrorException(
+                error_message,
+                http_status_code=r.status_code,
+                error_code=error_code,
+                documentation_url=documentation_url,
+            )
 
         return None
 
@@ -631,17 +651,25 @@ class Client:
                 )
                 error_message += "\n".join(error_messages)
                 error_code = error_response.get("error_code")
+                documentation_url = error_response.get("documentation_url")
 
                 raise InvalidRequestException(
-                    error_message, http_status_code=r.status_code, error_code=error_code
+                    error_message,
+                    http_status_code=r.status_code,
+                    error_code=error_code,
+                    documentation_url=documentation_url,
                 )
         else:
             error_response = json.loads(r.text)
             error_code = error_response.get("error_code")
+            documentation_url = error_response.get("documentation_url")
             error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
 
             raise APIErrorException(
-                error_message, http_status_code=r.status_code, error_code=error_code
+                error_message,
+                http_status_code=r.status_code,
+                error_code=error_code,
+                documentation_url=documentation_url,
             )
 
         return None
