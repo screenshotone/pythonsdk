@@ -12,22 +12,35 @@ API_TAKE_PATH = "/take"
 
 class InvalidRequestException(Exception):
     def __init__(
-        self, message, http_status_code=None, error_code=None, documentation_url=None
+        self,
+        message,
+        http_status_code=None,
+        error_code=None,
+        documentation_url=None,
+        host_returned_status_code=None,
     ):
         self.http_status_code = http_status_code
         self.error_code = error_code
         self.documentation_url = documentation_url
+        self.host_returned_status_code = host_returned_status_code
 
         super().__init__(message)
 
 
 class APIErrorException(Exception):
     def __init__(
-        self, message, http_status_code=None, error_code=None, documentation_url=None
+        self,
+        message,
+        http_status_code=None,
+        error_code=None,
+        documentation_url=None,
+        host_returned_status_code=None,
     ):
         self.http_status_code = http_status_code
         self.error_code = error_code
         self.documentation_url = documentation_url
+        self.host_returned_status_code = host_returned_status_code
+
         super().__init__(message)
 
 
@@ -603,24 +616,28 @@ class Client:
                 error_message += "\n".join(error_messages)
                 error_code = error_response.get("error_code")
                 documentation_url = error_response.get("documentation_url")
+                host_returned_status_code = error_response.get("returned_status_code")
 
                 raise InvalidRequestException(
                     error_message,
                     http_status_code=r.status_code,
                     error_code=error_code,
                     documentation_url=documentation_url,
+                    host_returned_status_code=host_returned_status_code,
                 )
         else:
             error_response = json.loads(r.text)
             error_code = error_response.get("error_code")
             documentation_url = error_response.get("documentation_url")
             error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
+            host_returned_status_code = error_response.get("returned_status_code")
 
             raise APIErrorException(
                 error_message,
                 http_status_code=r.status_code,
                 error_code=error_code,
                 documentation_url=documentation_url,
+                host_returned_status_code=host_returned_status_code,
             )
 
         return None
@@ -652,17 +669,20 @@ class Client:
                 error_message += "\n".join(error_messages)
                 error_code = error_response.get("error_code")
                 documentation_url = error_response.get("documentation_url")
+                host_returned_status_code = error_response.get("returned_status_code")
 
                 raise InvalidRequestException(
                     error_message,
                     http_status_code=r.status_code,
                     error_code=error_code,
                     documentation_url=documentation_url,
+                    host_returned_status_code=host_returned_status_code,
                 )
         else:
             error_response = json.loads(r.text)
             error_code = error_response.get("error_code")
             documentation_url = error_response.get("documentation_url")
+            host_returned_status_code = error_response.get("returned_status_code")
             error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
 
             raise APIErrorException(
@@ -670,6 +690,7 @@ class Client:
                 http_status_code=r.status_code,
                 error_code=error_code,
                 documentation_url=documentation_url,
+                host_returned_status_code=host_returned_status_code,
             )
 
         return None
