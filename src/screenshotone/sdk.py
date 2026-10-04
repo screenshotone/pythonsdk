@@ -10,23 +10,6 @@ API_BASE_URL = "https://api.screenshotone.com"
 API_TAKE_PATH = "/take"
 
 
-class InvalidRequestException(Exception):
-    def __init__(
-        self,
-        message,
-        http_status_code=None,
-        error_code=None,
-        documentation_url=None,
-        host_returned_status_code=None,
-    ):
-        self.http_status_code = http_status_code
-        self.error_code = error_code
-        self.documentation_url = documentation_url
-        self.host_returned_status_code = host_returned_status_code
-
-        super().__init__(message)
-
-
 class APIErrorException(Exception):
     def __init__(
         self,
@@ -44,12 +27,13 @@ class APIErrorException(Exception):
         super().__init__(message)
 
 
-class TakeOptions:
-    options = OrderedDict()
+class InvalidRequestException(APIErrorException):
+    pass
 
+
+class TakeOptions:
     def __init__(self, defaults):
-        for key, value in defaults.items():
-            self.options[key] = value
+        self.options = OrderedDict(defaults)
 
     def url(url):
         return TakeOptions({"url": url})
@@ -70,6 +54,11 @@ class TakeOptions:
 
         return self
 
+    def selector_algorithm(self, value):
+        self.options["selector_algorithm"] = value
+
+        return self
+
     def error_on_selector_not_found(self, value):
         self.options["error_on_selector_not_found"] = value
 
@@ -77,6 +66,21 @@ class TakeOptions:
 
     def response_type(self, value):
         self.options["response_type"] = value
+
+        return self
+
+    def include_shadow_dom(self, value):
+        self.options["include_shadow_dom"] = value
+
+        return self
+
+    def attachment_name(self, value):
+        self.options["attachment_name"] = value
+
+        return self
+
+    def external_identifier(self, value):
+        self.options["external_identifier"] = value
 
         return self
 
@@ -130,7 +134,14 @@ class TakeOptions:
 
         return self
 
+    def reduce_motion(self, value):
+        """Actively reduce page animations and media playback before capture."""
+        self.options["reduce_motion"] = value
+
+        return self
+
     def reduced_motion(self, value):
+        """Emulate the website visitor's reduced-motion preference."""
         self.options["reduced_motion"] = value
 
         return self
@@ -162,6 +173,16 @@ class TakeOptions:
 
     def click(self, value):
         self.options["click"] = value
+
+        return self
+
+    def hover(self, value):
+        self.options["hover"] = value
+
+        return self
+
+    def error_on_hover_selector_not_found(self, value):
+        self.options["error_on_hover_selector_not_found"] = value
 
         return self
 
@@ -230,6 +251,16 @@ class TakeOptions:
 
         return self
 
+    def fail_if_request_failed(self, value):
+        self.options["fail_if_request_failed"] = value
+
+        return self
+
+    def fail_if_content_missing(self, value):
+        self.options["fail_if_content_missing"] = value
+
+        return self
+
     def fail_if_content_contains(self, value):
         self.options["fail_if_content_contains"] = value
 
@@ -242,6 +273,21 @@ class TakeOptions:
 
     def full_page_max_height(self, value):
         self.options["full_page_max_height"] = value
+
+        return self
+
+    def full_page_slices(self, value):
+        self.options["full_page_slices"] = value
+
+        return self
+
+    def full_page_slice_height(self, value):
+        self.options["full_page_slice_height"] = value
+
+        return self
+
+    def full_page_slice_overlap_height(self, value):
+        self.options["full_page_slice_overlap_height"] = value
 
         return self
 
@@ -345,6 +391,11 @@ class TakeOptions:
 
         return self
 
+    def proxy_bypass_hosts(self, values: List[str]):
+        self.options["proxy_bypass_hosts"] = values
+
+        return self
+
     def time_zone(self, value):
         self.options["time_zone"] = value
 
@@ -445,6 +496,11 @@ class TakeOptions:
 
         return self
 
+    def metadata_content_format(self, value):
+        self.options["metadata_content_format"] = value
+
+        return self
+
     def metadata_http_response_status_code(self, value):
         self.options["metadata_http_response_status_code"] = value
 
@@ -467,6 +523,11 @@ class TakeOptions:
 
     def webhook_sign(self, value):
         self.options["webhook_sign"] = value
+
+        return self
+
+    def webhook_errors(self, value):
+        self.options["webhook_errors"] = value
 
         return self
 
@@ -530,6 +591,31 @@ class TakeOptions:
 
         return self
 
+    def pdf_margin(self, value):
+        self.options["pdf_margin"] = value
+
+        return self
+
+    def pdf_margin_top(self, value):
+        self.options["pdf_margin_top"] = value
+
+        return self
+
+    def pdf_margin_right(self, value):
+        self.options["pdf_margin_right"] = value
+
+        return self
+
+    def pdf_margin_bottom(self, value):
+        self.options["pdf_margin_bottom"] = value
+
+        return self
+
+    def pdf_margin_left(self, value):
+        self.options["pdf_margin_left"] = value
+
+        return self
+
     def bypass_csp(self, value):
         self.options["bypass_csp"] = value
 
@@ -555,12 +641,14 @@ class TakeOptions:
 
 
 class ScreenshotResultVision:
-    completion = None
+    def __init__(self, completion=None):
+        self.completion = completion
 
 
 class ScreenshotResult:
-    screenshot = None
-    vision = None
+    def __init__(self, screenshot=None, vision=None):
+        self.screenshot = screenshot
+        self.vision = vision
 
 
 class Client:
@@ -575,7 +663,7 @@ class Client:
         return Client(access_key, secret_key)
 
     def generate_take_url(self, options: TakeOptions):
-        query = options.query()
+        query = options.query().copy()
         query["access_key"] = self.access_key
 
         query_string = urllib.parse.urlencode(query, doseq=True)
@@ -594,103 +682,55 @@ class Client:
         )
 
     def take(self, options):
-        query = options.query()
-        query["access_key"] = self.access_key
-
-        url = "%s%s" % (API_BASE_URL, API_TAKE_PATH)
-        r = requests.post(url, json=query, stream=True)
-
-        if r.status_code == 200:
-            return r.raw
-        elif r.status_code == 400:
-            error_response = json.loads(r.text)
-            if not error_response.get("is_successful"):
-                error_response = json.loads(r.text)
-                error_messages = [
-                    detail["message"]
-                    for detail in error_response.get("error_details", [])
-                ]
-                error_message = (
-                    f"Error: {error_response.get('error_message', 'Unknown error')}\n"
-                )
-                error_message += "\n".join(error_messages)
-                error_code = error_response.get("error_code")
-                documentation_url = error_response.get("documentation_url")
-                host_returned_status_code = error_response.get("returned_status_code")
-
-                raise InvalidRequestException(
-                    error_message,
-                    http_status_code=r.status_code,
-                    error_code=error_code,
-                    documentation_url=documentation_url,
-                    host_returned_status_code=host_returned_status_code,
-                )
-        else:
-            error_response = json.loads(r.text)
-            error_code = error_response.get("error_code")
-            documentation_url = error_response.get("documentation_url")
-            error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
-            host_returned_status_code = error_response.get("returned_status_code")
-
-            raise APIErrorException(
-                error_message,
-                http_status_code=r.status_code,
-                error_code=error_code,
-                documentation_url=documentation_url,
-                host_returned_status_code=host_returned_status_code,
-            )
-
-        return None
+        return self._request(options).raw
 
     def take_with_metadata(self, options):
-        query = options.query()
-        query["access_key"] = self.access_key
-
-        url = "%s%s" % (API_BASE_URL, API_TAKE_PATH)
-        r = requests.post(url, json=query, stream=True)
+        r = self._request(options)
 
         vision = None
         completion = r.headers.get("x-screenshotone-vision-completion")
         if completion is not None:
             vision = ScreenshotResultVision(completion=completion)
 
-        if r.status_code == 200:
-            return ScreenshotResult(screenshot=r.raw, vision=vision)
-        elif r.status_code == 400:
-            error_response = json.loads(r.text)
-            if not error_response.get("is_successful"):
-                error_messages = [
-                    detail["message"]
-                    for detail in error_response.get("error_details", [])
-                ]
-                error_message = (
-                    f"Error: {error_response.get('error_message', 'Unknown error')}\n"
-                )
-                error_message += "\n".join(error_messages)
-                error_code = error_response.get("error_code")
-                documentation_url = error_response.get("documentation_url")
-                host_returned_status_code = error_response.get("returned_status_code")
+        return ScreenshotResult(screenshot=r.raw, vision=vision)
 
-                raise InvalidRequestException(
-                    error_message,
-                    http_status_code=r.status_code,
-                    error_code=error_code,
-                    documentation_url=documentation_url,
-                    host_returned_status_code=host_returned_status_code,
+    def _request(self, options):
+        query = options.query().copy()
+        query["access_key"] = self.access_key
+
+        url = "%s%s" % (API_BASE_URL, API_TAKE_PATH)
+        r = requests.post(url, json=query, stream=True)
+        if r.status_code == 200:
+            return r
+
+        try:
+            error_response = json.loads(r.text)
+        except (ValueError, TypeError):
+            error_response = {}
+        if not isinstance(error_response, dict):
+            error_response = {}
+
+        error_code = error_response.get("error_code")
+        if r.status_code == 400:
+            error_type = InvalidRequestException
+            error_message = (
+                f"Error: {error_response.get('error_message', 'Unknown error')}\n"
+            )
+            details = error_response.get("error_details")
+            if isinstance(details, list):
+                error_message += "\n".join(
+                    str(detail["message"])
+                    for detail in details
+                    if isinstance(detail, dict) and detail.get("message") is not None
                 )
         else:
-            error_response = json.loads(r.text)
-            error_code = error_response.get("error_code")
-            documentation_url = error_response.get("documentation_url")
-            host_returned_status_code = error_response.get("returned_status_code")
+            error_type = APIErrorException
             error_message = f"An error occurred while processing the request. Status code: {r.status_code}, error code: {error_code}"
 
-            raise APIErrorException(
-                error_message,
-                http_status_code=r.status_code,
-                error_code=error_code,
-                documentation_url=documentation_url,
-                host_returned_status_code=host_returned_status_code,
-            )
-
-        return None
+        raise error_type(
+            error_message,
+            http_status_code=r.status_code,
+            error_code=error_code,
+            documentation_url=error_response.get("documentation_url"),
+            host_returned_status_code=error_response.get("returned_status_code"),
+        )

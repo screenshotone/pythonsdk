@@ -1,1 +1,6 @@
-from screenshotone.sdk import Client, TakeOptions
+from screenshotone.sdk import (
+    APIErrorException,
+    Client,
+    InvalidRequestException,
+    TakeOptions,
+)

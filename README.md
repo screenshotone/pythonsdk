@@ -4,7 +4,9 @@ An official Python SDK for [ScreenshotOne.com API](https://screenshotone.com) to
 
 It takes minutes to start taking screenshots. Just [sign up](https://screenshotone.com/) to get access and secret keys, import the client, and you are ready to go.
 
-The SDK client is synchronized with the latest [screenshot API options](https://screenshotone.com/docs/options/).
+See the [screenshot API options](https://screenshotone.com/docs/options/) for option descriptions and supported values.
+
+Pass `access_key` to `Client` and use `.async_option(True)` for the API's `async` option. Repeated options such as `.proxy_bypass_hosts(["cdn.example.com", "cdn.*.screenshotone.com"])` accept lists.
 
 ## Installation
 
@@ -48,6 +50,8 @@ with open('example.png', 'wb') as result_file:
 Read about [how to handle the ScreenshotOne API errors](https://screenshotone.com/docs/guides/how-to-handle-api-errors/), and that's how you can get the HTTP status code and the error code of the request:
 
 ```python
+from screenshotone import APIErrorException, InvalidRequestException
+
 try:
     # ...
     # render a screenshot and download the image as stream
@@ -70,9 +74,36 @@ except Exception as e:
     print(f"An unexpected error occurred: {e}")
 ```
 
+`InvalidRequestException` inherits from `APIErrorException`. Catch `APIErrorException` to handle both; place an `InvalidRequestException` handler first if you want to handle invalid requests separately.
+
+## Development
+
+Install the SDK and run the offline regression tests:
+
+```shell
+python -m pip install -e .
+python -m unittest discover -s tests -v
+```
+
+The tests mock HTTP requests and do not require API keys or network access. `tests/fixtures/documented_options.json` contains a saved documentation snapshot and its verification date. These tests check the snapshot, not the live docs; refresh it when synchronizing the SDK with the docs.
+
+CI runs the tests on pushes and pull requests using Python 3.7 through 3.14. The release workflow also runs the tests before publishing.
+
 ## Release
 
 [Github Actions](https://github.com/screenshotone/pythonsdk/blob/main/.github/workflows/pypi-release.yml) is used to automate the release process and publishing to PyPI. Update the library version in `pyproject.toml` and [create a new release](https://github.com/screenshotone/pythonsdk/releases/new) to launch the `publish` workflow.
+
+## Useful resources
+
+Python tutorials from the ScreenshotOne blog:
+
+- [Take website screenshots with Python](https://screenshotone.com/blog/how-to-take-website-screenshots-in-python/)
+- [How to Take Bulk Screenshots in Python with a Screenshot API](https://screenshotone.com/blog/bulk-screenshots-python/)
+- [How to Take Website Screenshots with Playwright in Python](https://screenshotone.com/blog/playwright-python-screenshots/)
+- [How to Take Full Page Screenshots with Playwright in Python](https://screenshotone.com/blog/playwright-python-full-page-website-screenshots/)
+- [How to Take Bulk Screenshots with Playwright in Python](https://screenshotone.com/blog/bulk-screenshots-playwright-python/)
+- [Website Screenshots with Selenium in Python](https://screenshotone.com/blog/selenium-python-screenshots/)
+- [How to Take Screenshots with pyppeteer in Python](https://screenshotone.com/blog/pyppeteer-python-screenshots/)
 
 ## License
 
