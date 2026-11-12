@@ -331,11 +331,6 @@ class TakeOptions:
 
         return self
 
-    def block_socials(self, value):
-        self.options["block_socials"] = value
-
-        return self
-
     def block_trackers(self, value):
         self.options["block_trackers"] = value
 
